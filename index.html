@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Road Damage Detection Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">RD</div>
+      <div>
+        <h1>Road Damage Detection</h1>
+        <p class="subtitle">YOLOv8 + CLAHE Inspection Dashboard</p>
+      </div>
+    </div>
+    <div class="api-pill" id="api-pill">
+      <span class="dot"></span>
+      <span>Azure API Linked</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Mode Tabs -->
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="image" role="tab">Image Analysis</button>
+      <button class="tab-btn" data-tab="video" role="tab">Video Analysis</button>
+      <button class="tab-btn" data-tab="live" role="tab">Live Camera</button>
+    </nav>
+
+    <!-- Status Banner -->
+    <div id="status-bar" class="status-bar hidden">
+      <span class="spinner" id="status-spinner"></span>
+      <span id="status-text">Ready</span>
+    </div>
+
+    <!-- Main 2-Column Workspace -->
+    <div class="grid">
+      <!-- Left: Input & Media Preview -->
+      <section class="card workspace">
+        <!-- IMAGE PANEL -->
+        <div id="panel-image" class="tab-panel active">
+          <div class="upload-row">
+            <label class="file-drop" for="image-input">
+              <input type="file" id="image-input" accept="image/*" hidden />
+              <span id="image-file-name">Click to choose a road image (.jpg, .png)</span>
+            </label>
+            <button id="btn-analyze-image" class="btn primary" disabled>Analyze Image</button>
+          </div>
+          <div class="viewport">
+            <img id="image-preview" class="media hidden" alt="Annotated road image" />
+            <p id="image-placeholder" class="placeholder">Annotated image will appear here</p>
+          </div>
+          <div class="actions-row hidden" id="image-actions">
+            <a id="image-download" class="btn secondary" target="_blank" rel="noopener">Open Full Image</a>
+          </div>
+        </div>
+
+        <!-- VIDEO PANEL -->
+        <div id="panel-video" class="tab-panel">
+          <div class="upload-row">
+            <label class="file-drop" for="video-input">
+              <input type="file" id="video-input" accept="video/*" hidden />
+              <span id="video-file-name">Click to choose a short road video (.mp4)</span>
+            </label>
+            <button id="btn-analyze-video" class="btn primary" disabled>Analyze Video</button>
+          </div>
+          <p class="hint">Tip: Start with short 3–10 second clips while running on CPU.</p>
+          <div class="viewport">
+            <video id="video-preview" class="media hidden" controls playsinline></video>
+            <p id="video-placeholder" class="placeholder">Processed video will appear here</p>
+          </div>
+          <div class="actions-row hidden" id="video-actions">
+            <span id="frames-info" class="meta-text"></span>
+            <a id="video-download" class="btn secondary" target="_blank" rel="noopener" download>Download Video (.mp4)</a>
+          </div>
+        </div>
+
+        <!-- LIVE CAMERA PANEL -->
+        <div id="panel-live" class="tab-panel">
+          <div class="upload-row">
+            <button id="btn-start-live" class="btn primary">Start Camera</button>
+            <button id="btn-stop-live" class="btn danger" disabled>Stop Camera</button>
+          </div>
+          <div class="viewport">
+            <img id="live-output" class="media hidden" alt="Live road damage detection feed" />
+            <p id="live-placeholder" class="placeholder">Click "Start Camera" to begin real-time detection</p>
+          </div>
+          <video id="webcam" autoplay playsinline hidden></video>
+          <canvas id="capture-canvas" hidden></canvas>
+        </div>
+      </section>
+
+      <!-- Right: Live Analytics Panel -->
+      <aside class="card analytics">
+        <div class="analytics-header">
+          <h2>Road Assessment</h2>
+          <span id="condition-badge" class="badge neutral">Waiting</span>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric-box">
+            <span class="metric-label">Processing Speed</span>
+            <strong class="metric-value"><span id="metric-fps">0.0</span> <small>FPS</small></strong>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Total Damages</span>
+            <strong class="metric-value" id="metric-total">0</strong>
+          </div>
+        </div>
+
+        <h3 class="section-title">Damage Breakdown</h3>
+        <div class="damage-list">
+          <div class="damage-item">
+            <div class="damage-info">
+              <span class="swatch d00"></span>
+              <div>
+                <strong>D00</strong>
+                <span>Longitudinal Crack</span>
+              </div>
+            </div>
+            <span class="damage-count" id="count-D00">0</span>
+          </div>
+
+          <div class="damage-item">
+            <div class="damage-info">
+              <span class="swatch d10"></span>
+              <div>
+                <strong>D10</strong>
+                <span>Transverse Crack</span>
+              </div>
+            </div>
+            <span class="damage-count" id="count-D10">0</span>
+          </div>
+
+          <div class="damage-item">
+            <div class="damage-info">
+              <span class="swatch d20"></span>
+              <div>
+                <strong>D20</strong>
+                <span>Alligator Crack</span>
+              </div>
+            </div>
+            <span class="damage-count" id="count-D20">0</span>
+          </div>
+
+          <div class="damage-item">
+            <div class="damage-info">
+              <span class="swatch d40"></span>
+              <div>
+                <strong>D40</strong>
+                <span>Pothole</span>
+              </div>
+            </div>
+            <span class="damage-count" id="count-D40">0</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
